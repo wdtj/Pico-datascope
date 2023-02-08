@@ -11,5 +11,4 @@
 void xbeeDecoderInit(int direction);
 void xbeeDecoder(int direction, char ch);
 
-
 #endif /* XBEE_H_ */

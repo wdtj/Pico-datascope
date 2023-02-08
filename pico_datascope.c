@@ -8,15 +8,11 @@
 #include "stdlib.h"
 #include "pico/stdio.h"
 #include "pico/stdlib.h"
-#include "pico/multicore.h"
 #include "pico/cyw43_arch.h"
-#include "hardware/uart.h"
-#include "hardware/gpio.h"
 #include <ctype.h>
 
 #include "xbee.h"
 #include "xterm.h"
-
 
 #define UART0_TX_PIN 0
 #define UART0_RX_PIN 1
@@ -202,8 +198,6 @@ void displayChar(int direction, char ch)
 	xtermInverse(false);
 }
 
-#define SENDER
-
 void send()
 {
 	uart_write_blocking(uart0, (uint8_t*) &msg1, sizeof msg1); // Send on uart0, receive on uart1
@@ -213,17 +207,6 @@ void send()
 	uart_write_blocking(uart1, (uint8_t*) &msg2, sizeof msg2); // Send on uart0, receive on uart1
 	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
 	sleep_ms(500);
-}
-
-void sender(void)
-{
-	while (true)
-	{
-
-#ifdef SENDER
-		send();
-#endif
-	}
 }
 
 int main()
@@ -243,9 +226,6 @@ int main()
 
 	uart_init(uart0, BAUD_RATE);
 	uart_init(uart1, BAUD_RATE);
-
-//	multicore_launch_core1(sender);
-//	printf("Started sender\n");
 
 	while (true)
 	{
@@ -320,8 +300,6 @@ int main()
 			// After we process commands, update the config display
 			updateConfigDisplay();
 		}
-
-//		printf("Blink %d\n", count++);
 
 	}
 }

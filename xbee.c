@@ -15,8 +15,16 @@ void atCmdId(void *ptr)
 
 void atCmdRespId(void *ptr)
 {
-	printf("atCmdResp ID\n");
+	printf("atCmd ID Resp\n");
 }
+
+typedef struct {
+	union {
+		unsigned long int32;
+		unsigned int int16;
+		unsigned char ch;
+	};
+} params;
 
 struct demarshallFormat demarshallers[] =
 {
@@ -96,12 +104,13 @@ bool xbeeDemarshallMatch(char *format, char *buffer, size_t bufferLength)
 {
 	while (bufferLength && *format)
 	{
-		printf("buffer=%x, bufferLength=%d. format=%x\n", *buffer, bufferLength, *format);
+		printf("buffer=%x, bufferLength=%d. format=%x\n", *buffer, bufferLength,
+				*format);
 		switch (*format)
 		{
 		case '%':
 			format++;
-			if (*format && bufferLength>0)
+			if (*format && bufferLength > 0)
 			{
 				printf("Paraform\n");
 				if (!xbeeDemarshallParaform(format, &bufferLength, &buffer))
@@ -134,7 +143,7 @@ bool xbeeDemarshallMatch(char *format, char *buffer, size_t bufferLength)
 
 		printf("End of buffer=%d or format=%d\n", *buffer, *format);
 
-		if (bufferLength==0 && *format=='\0')
+		if (bufferLength == 0 && *format == '\0')
 		{
 			printf("Match completed\n");
 			return true;
@@ -196,7 +205,7 @@ void xbeeDecoder(int direction, char ch)
 
 	case FRAME_LENGTH_LSB:
 		stream->length += ch;
-		stream->received=0;
+		stream->received = 0;
 		stream->dataPtr = stream->data;
 		stream->xbeeState = FRAME_DATA;
 		printf("Switch to state %d\n", stream->xbeeState);
